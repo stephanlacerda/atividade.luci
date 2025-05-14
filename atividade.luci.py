@@ -1,168 +1,158 @@
-pessoas = []
-contas = []
-movimentacoes = []
+usuarios = []
+livros = []
+registros = []
 
-def achar_pessoa(cpf):
-    for p in pessoas:
-        if p['cpf'] == cpf:
-            return p
+def achar_usuario(cpf):
+    for u in usuarios:
+        if u['cpf'] == cpf:
+            return u
     return None
 
-def achar_conta(numero):
-    for c in contas:
-        if c['numero'] == numero:
-            return c
+def achar_livro(codigo):
+    for l in livros:
+        if l['codigo'] == codigo:
+            return l
     return None
 
-def nova_pessoa():
+def novo_usuario():
     cpf = input("CPF: ")
     nome = input("Nome: ")
     end = input("Endereço: ")
     tel = input("Telefone: ")
-    pessoa = {'cpf': cpf, 'nome': nome, 'end': end, 'tel': tel}
-    pessoas.append(pessoa)
-    print("Pessoa cadastrada com sucesso.")
+    usuario = {'cpf': cpf, 'nome': nome, 'end': end, 'tel': tel}
+    usuarios.append(usuario)
+    print("Usuário cadastrado com sucesso.")
 
-def mudar_pessoa():
-    cpf = input("Digite o CPF da pessoa: ")
-    pessoa = achar_pessoa(cpf)
-    if pessoa:
-        pessoa['nome'] = input("Novo nome: ")
-        pessoa['end'] = input("Novo endereço: ")
-        pessoa['tel'] = input("Novo telefone: ")
+def mudar_usuario():
+    cpf = input("Digite o CPF do usuário: ")
+    usuario = achar_usuario(cpf)
+    if usuario:
+        usuario['nome'] = input("Novo nome: ")
+        usuario['end'] = input("Novo endereço: ")
+        usuario['tel'] = input("Novo telefone: ")
         print("Dados atualizados.")
     else:
-        print("Pessoa não encontrada.")
+        print("Usuário não encontrado.")
 
-def mostrar_pessoas():
-    for p in pessoas:
-        print(p)
+def mostrar_usuarios():
+    for u in usuarios:
+        print(u)
 
-def apagar_pessoa():
-    cpf = input("CPF da pessoa a remover: ")
-    pessoa = achar_pessoa(cpf)
-    if pessoa:
-        pessoas.remove(pessoa)
-        print("Pessoa removida.")
+def apagar_usuario():
+    cpf = input("CPF do usuário a remover: ")
+    usuario = achar_usuario(cpf)
+    if usuario:
+        usuarios.remove(usuario)
+        print("Usuário removido.")
     else:
-        print("Pessoa não achada.")
+        print("Usuário não achado.")
 
-def nova_conta():
-    numero = input("Número da conta: ")
-    agencia = input("Agência: ")
-    cpf_dono = input("CPF do dono: ")
-    if achar_pessoa(cpf_dono):
-        conta = {'numero': numero, 'agencia': agencia, 'cpf': cpf_dono, 'saldo': 0}
-        contas.append(conta)
-        print("Conta criada.")
+def novo_livro():
+    codigo = input("Código do livro: ")
+    titulo = input("Título: ")
+    cpf_dono = input("CPF do responsável: ")
+    if achar_usuario(cpf_dono):
+        livro = {'codigo': codigo, 'titulo': titulo, 'cpf': cpf_dono, 'status': 'disponível'}
+        livros.append(livro)
+        print("Livro cadastrado.")
     else:
         print("CPF não cadastrado.")
 
-def mudar_conta():
-    numero = input("Número da conta: ")
-    conta = achar_conta(numero)
-    if conta:
-        conta['agencia'] = input("Nova agência: ")
-        print("Conta atualizada.")
+def mudar_livro():
+    codigo = input("Código do livro: ")
+    livro = achar_livro(codigo)
+    if livro:
+        livro['titulo'] = input("Novo título: ")
+        print("Livro atualizado.")
     else:
-        print("Conta não encontrada.")
+        print("Livro não encontrado.")
 
-def mostrar_contas():
-    for c in contas:
-        print(c)
+def mostrar_livros():
+    for l in livros:
+        print(l)
 
-def apagar_conta():
-    numero = input("Número da conta: ")
-    conta = achar_conta(numero)
-    if conta:
-        contas.remove(conta)
-        print("Conta excluída.")
+def apagar_livro():
+    codigo = input("Código do livro: ")
+    livro = achar_livro(codigo)
+    if livro:
+        livros.remove(livro)
+        print("Livro removido.")
     else:
-        print("Conta inválida.")
+        print("Livro inválido.")
 
-def fazer_deposito():
-    numero = input("Conta para depósito: ")
-    conta = achar_conta(numero)
-    if conta:
-        valor = float(input("Valor: "))
-        conta['saldo'] += valor
-        movimentacoes.append({'tipo': 'depósito', 'conta': numero, 'valor': valor})
-        print("Depósito feito.")
+def registrar_emprestimo():
+    codigo = input("Código do livro: ")
+    livro = achar_livro(codigo)
+    if livro and livro['status'] == 'disponível':
+        livro['status'] = 'emprestado'
+        registros.append({'tipo': 'empréstimo', 'livro': codigo})
+        print("Empréstimo registrado.")
     else:
-        print("Conta não encontrada.")
+        print("Livro não disponível ou não encontrado.")
 
-def fazer_saque():
-    numero = input("Conta para saque: ")
-    conta = achar_conta(numero)
-    if conta:
-        valor = float(input("Valor: "))
-        if conta['saldo'] >= valor:
-            conta['saldo'] -= valor
-            movimentacoes.append({'tipo': 'saque', 'conta': numero, 'valor': valor})
-            print("Saque feito.")
-        else:
-            print("Saldo insuficiente.")
+def registrar_devolucao():
+    codigo = input("Código do livro: ")
+    livro = achar_livro(codigo)
+    if livro and livro['status'] == 'emprestado':
+        livro['status'] = 'disponível'
+        registros.append({'tipo': 'devolução', 'livro': codigo})
+        print("Devolução registrada.")
     else:
-        print("Conta inválida.")
+        print("Livro não encontrado ou não está emprestado.")
 
-def fazer_transferencia():
-    origem = input("Conta de origem: ")
-    destino = input("Conta de destino: ")
-    valor = float(input("Valor: "))
-    c1 = achar_conta(origem)
-    c2 = achar_conta(destino)
-    if c1 and c2:
-        if c1['saldo'] >= valor:
-            c1['saldo'] -= valor
-            c2['saldo'] += valor
-            movimentacoes.append({'tipo': 'pix', 'de': origem, 'para': destino, 'valor': valor})
-            print("Transferência concluída.")
-        else:
-            print("Sem saldo.")
+def registrar_transferencia():
+    origem = input("Código do livro de origem: ")
+    destino = input("Código do livro de destino: ")
+    descricao = input("Motivo da transferência: ")
+    l1 = achar_livro(origem)
+    l2 = achar_livro(destino)
+    if l1 and l2:
+        registros.append({'tipo': 'transferência', 'de': origem, 'para': destino, 'motivo': descricao})
+        print("Transferência registrada.")
     else:
-        print("Alguma conta está errada.")
+        print("Algum código está incorreto.")
 
-def ver_extrato():
-    numero = input("Conta: ")
-    conta = achar_conta(numero)
-    if conta:
-        print(f"Saldo atual: R$ {conta['saldo']:.2f}")
-        for m in movimentacoes:
-            if m.get('conta') == numero or m.get('de') == numero or m.get('para') == numero:
-                print(m)
+def ver_historico():
+    codigo = input("Código do livro: ")
+    livro = achar_livro(codigo)
+    if livro:
+        print(f"Status atual: {livro['status']}")
+        for r in registros:
+            if r.get('livro') == codigo or r.get('de') == codigo or r.get('para') == codigo:
+                print(r)
     else:
-        print("Conta não encontrada.")
+        print("Livro não encontrado.")
 
 def menu():
     while True:
         print("\n--- MENU ---")
-        print("1. Cadastrar pessoa")
-        print("2. Atualizar pessoa")
-        print("3. Listar pessoas")
-        print("4. Remover pessoa")
-        print("5. Criar conta")
-        print("6. Editar conta")
-        print("7. Ver contas")
-        print("8. Excluir conta")
-        print("9. Depositar")
-        print("10. Sacar")
-        print("11. Transferir")
-        print("12. Extrato")
+        print("1. Cadastrar usuário")
+        print("2. Atualizar usuário")
+        print("3. Listar usuários")
+        print("4. Remover usuário")
+        print("5. Cadastrar livro")
+        print("6. Editar livro")
+        print("7. Ver livros")
+        print("8. Excluir livro")
+        print("9. Registrar empréstimo")
+        print("10. Registrar devolução")
+        print("11. Registrar transferência")
+        print("12. Ver histórico do livro")
         print("13. Sair")
         op = input("Escolha: ")
 
-        if op == '1': nova_pessoa()
-        elif op == '2': mudar_pessoa()
-        elif op == '3': mostrar_pessoas()
-        elif op == '4': apagar_pessoa()
-        elif op == '5': nova_conta()
-        elif op == '6': mudar_conta()
-        elif op == '7': mostrar_contas()
-        elif op == '8': apagar_conta()
-        elif op == '9': fazer_deposito()
-        elif op == '10': fazer_saque()
-        elif op == '11': fazer_transferencia()
-        elif op == '12': ver_extrato()
+        if op == '1': novo_usuario()
+        elif op == '2': mudar_usuario()
+        elif op == '3': mostrar_usuarios()
+        elif op == '4': apagar_usuario()
+        elif op == '5': novo_livro()
+        elif op == '6': mudar_livro()
+        elif op == '7': mostrar_livros()
+        elif op == '8': apagar_livro()
+        elif op == '9': registrar_emprestimo()
+        elif op == '10': registrar_devolucao()
+        elif op == '11': registrar_transferencia()
+        elif op == '12': ver_historico()
         elif op == '13':
             print("Encerrado.")
             break
